@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>profile</title>
+    <link rel="stylesheet" href="cs.css">
+</head>
+
+<body>
+    <div class="main">
+        <div class="title">
+            <h2 style="font-size: 20px;">Account & Settings</h2>
+            <p style="font-size: 10px;" id="todayDate"></p>
+            <span class="cencel"><img src="arrow-right-01-stroke-rounded.svg" width="20px"></span>
+        </div>
+        <div class="tabs">
+            <button class="tab active" data-tab="profile">Profile</button>
+            <button class="tab" data-tab="notifications">Notifications</button>
+            <button class="tab" data-tab="appearance">Appearance</button>
+            <button class="tab" data-tab="account">Account</button>
+        </div>
+        <div id="profile" class="tab-content active">
+            <div class="bsdetail">
+                <div class="dtitle">
+                    <h4>Basic Details</h4>
+                </div>
+                <div class="dinfo">
+                    <div class="profile-box">
+                        <img id="profileImage" src="user.png">
+                        <div class="btns">
+                            <label class="uploadBtn">
+                                <input type="file" id="fileUpload" accept="image/*">
+                                Change Picture
+                            </label>
+                            <button id="deletePic" class="deleteBtn">Delete Pic</button>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="nms">
+                            <div class="n">
+                                <label>First Name</label>
+                                <input type="text" id="firstName" placeholder="Enter First Name">
+                            </div>
+                            <div class="n">
+                                <label>Last Name</label>
+                                <input type="text" id="lastName" placeholder="Enter Last Name">
+                            </div>
+                        </div>
+                        <div class="nms">
+                            <div class="n">
+                                <label>Mobile Number</label>
+                                <input type="tel" maxlength="10" id="mobile" placeholder="Enter Mobile Number">
+                            </div>
+                            <div class="n">
+                                <label>Email</label>
+                                <input type="email" id="email" placeholder="Enter Email">
+                            </div>
+                        </div>
+                        <button id="saveBtn">Save</button>
+                    </div>
+
+                    <!-- Popup -->
+                    <div id="popup">Saved ✔</div>
+                </div>
+            </div>
+
+            <div class="pubprof">
+                <div class="dtitle">
+                    <h4>Public Profile</h4>
+                </div>
+                <div class="pub1">
+                    <div class="txt">
+                        <h5>Make Contact Info Public</h5>
+                        <h6>Means that anyone viewing your profile will able to see.</h6>
+                    </div>
+                    <div class="btn">
+                        <div class="switch">
+                            <label class="switch">
+                                <input type="checkbox" id="toggleBtn">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="delpro">
+                <div class="dtitle">
+                    <h4>Delete Profile</h4>
+                </div>
+                <div class="del">
+                    <h5>Delete your account and all of your source data.</h5>
+                    <button>Delete Account</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS TAB -->
+        <div id="notifications" class="tab-content">
+            <h3>Notifications</h3>
+            <p>All notification settings appear here.</p>
+        </div>
+
+        <!-- APPEARANCE TAB -->
+        <div id="appearance" class="tab-content">
+            <h3>Appearance</h3>
+            <p>Theme, color mode, and display settings will appear here.</p>
+        </div>
+
+        <!-- ACCOUNT TAB -->
+        <div id="account" class="tab-content">
+            <h3>Account Settings</h3>
+            <p>Change password, delete account, privacy settings.</p>
+        </div>
+    </div>
+
+
+    <script>
+        // Show today's date
+        function showTodayDate() {
+            const date = new Date();
+            const options = { day: '2-digit', month: 'long', year: 'numeric' };
+            const today = date.toLocaleDateString('en-GB', options);
+            document.getElementById("todayDate").innerText = today;
+        }
+        showTodayDate();
+
+        // Input fields
+        const firstName = document.getElementById("firstName");
+        const lastName = document.getElementById("lastName");
+        const mobile = document.getElementById("mobile");
+        const email = document.getElementById("email");
+        const saveBtn = document.getElementById("saveBtn");
+        const popup = document.getElementById("popup");
+
+        // Load saved data
+        window.onload = () => {
+            firstName.value = localStorage.getItem("fname") || "";
+            lastName.value = localStorage.getItem("lname") || "";
+            mobile.value = localStorage.getItem("mobile") || "";
+            email.value = localStorage.getItem("email") || "";
+        };
+
+        function showPopup(message, isError = false) {
+            popup.textContent = message;
+            if (isError) popup.classList.add("error");
+            else popup.classList.remove("error");
+
+            popup.style.opacity = "1";
+            popup.style.transform = "translateY(0)";
+            setTimeout(() => {
+                popup.style.opacity = "0";
+                popup.style.transform = "translateY(20px)";
+            }, 1500);
+        }
+
+        function isValidEmail(mail) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail);
+        }
+
+        saveBtn.addEventListener("click", () => {
+            if (firstName.value.trim() === "") { showPopup("Enter First Name!", true); return; }
+            if (lastName.value.trim() === "") { showPopup("Enter Last Name!", true); return; }
+            if (mobile.value.trim() === "") { showPopup("Enter Mobile Number!", true); return; }
+            if (email.value.trim() === "") { showPopup("Enter Email!", true); return; }
+            if (!isValidEmail(email.value.trim())) { showPopup("Invalid Email Format!", true); return; }
+
+            localStorage.setItem("fname", firstName.value);
+            localStorage.setItem("lname", lastName.value);
+            localStorage.setItem("mobile", mobile.value);
+            localStorage.setItem("email", email.value);
+
+            showPopup("Saved ✔ ", false);
+        });
+
+        document.getElementById("toggleBtn").addEventListener("change", function () {
+            console.log(this.checked ? "ON" : "OFF");
+        });
+
+        // TAB SWITCHING
+        const tabs = document.querySelectorAll(".tab");
+        const contents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                contents.forEach(c => c.classList.remove("active"));
+
+                tab.classList.add("active");
+                document.getElementById(tab.dataset.tab).classList.add("active");
+            });
+        });
+
+
+        // Profile picture
+        const fileUpload = document.getElementById("fileUpload");
+        const profileImage = document.getElementById("profileImage");
+        const deletePic = document.getElementById("deletePic");
+
+        fileUpload.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) profileImage.src = URL.createObjectURL(file);
+        });
+
+        deletePic.addEventListener("click", () => {
+            profileImage.src = "user.png";
+        });
+    </script>
+</body>
+
+</html>
